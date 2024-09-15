@@ -1,0 +1,53 @@
+
+spring:
+  application:
+    name: online-library-spring-app
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres?currentSchema=online_library_schema
+    username: postgres
+    password: 12345
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+logging:
+  level:
+    root: DEBUG
+    org.springframework: DEBUG
+
+server:
+  port=8080:
+
+#authentication:
+#  jwt:
+#    public-key: |
+#      MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCB/6QSpRR66sekrgnR8mOIdFuV
+#      +YNcPDvbTKQtbYbnHNlovHqmba6cJkKytwc1n6PPWPhVNbfwef+ZXcUY5CP8qEIW
+#      cpNCypZOaKD6iuVAZaP9ncXtspfSGgMP5LpPNt5gnXw5PiktqEb05PDrxLlgz5/F
+#      bN+Wlg6xQ7LB0W+jlwIDAQAB
+#
+#    private-key: |
+#      MIICXAIBAAKBgQCB/6QSpRR66sekrgnR8mOIdFuV+YNcPDvbTKQtbYbnHNlovHqm
+#      ba6cJkKytwc1n6PPWPhVNbfwef+ZXcUY5CP8qEIWcpNCypZOaKD6iuVAZaP9ncXt
+#      spfSGgMP5LpPNt5gnXw5PiktqEb05PDrxLlgz5/FbN+Wlg6xQ7LB0W+jlwIDAQAB
+#      AoGAfi4gl2hcZKKWfaXgKkRXkA9BBmVVt6VPhCD0CpQRKSq7bAnmErzLiw0oGEfH
+#      W6lEWvJEuJCXpXcFPVvi/7IRqrAHeya434/iGkHBlP9J4y/btUWWbM0gWjv5JEQS
+#      BBpwKu3xIxHE8RSegWS0S0xtu47aoiiHW8Ndpkgij8E/HeECQQDwVS4G0z2AxpMR
+#      6hyLiwZeeuPhMvQ2b1CR5LDEG613O1Ncymq9fHDYzswSu9X2OXNSWTphcKS0OeZN
+#      uQhz4hb7AkEAinkjJvLpfBf4G5KKONuHVnIVHIRZK78BQ8lwkoRcH+pf6+RltjL+
+#      /1hkDB6lJxzhF4OMh21RXLLN3gjz7eNzFQJAFxeIIZ3AZhQuY2VEMuA7z24tYSD9
+#      OBHAAxSfK2ihZThtDRhh4y0Gxr4v+4jSySLCAuKR6nThTnPVvhgOSNwrawJAWC6S
+#      gzA4Hi2Jc82bNmAezJ8z8Igb3S7y2D9E8BlYLX7s/OTjHOdW2jdo5wrw83qBoZ7F
+#      dEzafmTjkx0ycfDhjQJBANRDCU9x0QcZoceRbh8agHHMrUzx8VMpC4fkJt1VthZU
+#      nF98bdJbSC5qkIKEZcxLNS3BNCSO+CJaAzYQd6ldD/A=
+#
+#
+#    access:
+#      expiration-in-ms: 120000
+#    refresh:
+#      expiration-in-ms: 600000
+
