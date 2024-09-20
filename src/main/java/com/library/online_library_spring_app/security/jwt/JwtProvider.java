@@ -28,31 +28,40 @@ import java.util.Date;
 
 @Component
 public class JwtProvider {
+    @Value("${authentication.jwt.private-key}")
+    private String privateKey;
+
+    @Value("${authentication.jwt.public-key}")
+    private String publicKey;
+
     private static final String JWT_HEADER_STRING = "Authorization";
     private static final String JWT_TOKEN_PREFIX = "Bearer";
-    private final PrivateKey jwtPrivateKey;
-    private final PublicKey jwtPublicKey;
+    private PrivateKey jwtPrivateKey;
+    private PublicKey jwtPublicKey;
     private final CustomUserDetailService userDetailsService;
     private final AuthTokenService authTokenService;
 
-
-    public JwtProvider(@Value("${authentication.jwt.private-key}") String jwtPrivateKeyStr,
-                       @Value("${authentication.jwt.public-key}") String jwtPublicKeyStr,
-                       CustomUserDetailService userDetailsService, AuthTokenService authTokenService) {
+    public JwtProvider(CustomUserDetailService userDetailsService, AuthTokenService authTokenService) {
         this.userDetailsService = userDetailsService;
         this.authTokenService = authTokenService;
+        initializeKeys();
+    }
+
+    private void initializeKeys() {
         KeyFactory keyFactory = getKeyFactory();
         try {
             Base64.Decoder decoder = Base64.getDecoder();
-            PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(decoder.decode(jwtPrivateKeyStr));
-            X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(decoder.decode(jwtPublicKeyStr));
+            PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(decoder.decode(privateKey));
+            X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(decoder.decode(publicKey));
 
             jwtPrivateKey = keyFactory.generatePrivate(privateKeySpec);
             jwtPublicKey = keyFactory.generatePublic(publicKeySpec);
         } catch (Exception e) {
-            throw new RuntimeException("Invalid key spesification", e);
+            throw new RuntimeException("Invalid key specification", e);
         }
     }
+
+
 
     public String generateToken(UserPrincipal userPrincipal, Long expireDate) {
         return Jwts.builder()

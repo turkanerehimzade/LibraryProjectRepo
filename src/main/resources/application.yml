@@ -1,4 +1,3 @@
-
 spring:
   application:
     name: online-library-spring-app
@@ -20,34 +19,17 @@ logging:
     org.springframework: DEBUG
 
 server:
-  port=8080:
+  port: 8080
 
-#authentication:
-#  jwt:
-#    public-key: |
-#      MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCB/6QSpRR66sekrgnR8mOIdFuV
-#      +YNcPDvbTKQtbYbnHNlovHqmba6cJkKytwc1n6PPWPhVNbfwef+ZXcUY5CP8qEIW
-#      cpNCypZOaKD6iuVAZaP9ncXtspfSGgMP5LpPNt5gnXw5PiktqEb05PDrxLlgz5/F
-#      bN+Wlg6xQ7LB0W+jlwIDAQAB
-#
-#    private-key: |
-#      MIICXAIBAAKBgQCB/6QSpRR66sekrgnR8mOIdFuV+YNcPDvbTKQtbYbnHNlovHqm
-#      ba6cJkKytwc1n6PPWPhVNbfwef+ZXcUY5CP8qEIWcpNCypZOaKD6iuVAZaP9ncXt
-#      spfSGgMP5LpPNt5gnXw5PiktqEb05PDrxLlgz5/FbN+Wlg6xQ7LB0W+jlwIDAQAB
-#      AoGAfi4gl2hcZKKWfaXgKkRXkA9BBmVVt6VPhCD0CpQRKSq7bAnmErzLiw0oGEfH
-#      W6lEWvJEuJCXpXcFPVvi/7IRqrAHeya434/iGkHBlP9J4y/btUWWbM0gWjv5JEQS
-#      BBpwKu3xIxHE8RSegWS0S0xtu47aoiiHW8Ndpkgij8E/HeECQQDwVS4G0z2AxpMR
-#      6hyLiwZeeuPhMvQ2b1CR5LDEG613O1Ncymq9fHDYzswSu9X2OXNSWTphcKS0OeZN
-#      uQhz4hb7AkEAinkjJvLpfBf4G5KKONuHVnIVHIRZK78BQ8lwkoRcH+pf6+RltjL+
-#      /1hkDB6lJxzhF4OMh21RXLLN3gjz7eNzFQJAFxeIIZ3AZhQuY2VEMuA7z24tYSD9
-#      OBHAAxSfK2ihZThtDRhh4y0Gxr4v+4jSySLCAuKR6nThTnPVvhgOSNwrawJAWC6S
-#      gzA4Hi2Jc82bNmAezJ8z8Igb3S7y2D9E8BlYLX7s/OTjHOdW2jdo5wrw83qBoZ7F
-#      dEzafmTjkx0ycfDhjQJBANRDCU9x0QcZoceRbh8agHHMrUzx8VMpC4fkJt1VthZU
-#      nF98bdJbSC5qkIKEZcxLNS3BNCSO+CJaAzYQd6ldD/A=
-#
-#
-#    access:
-#      expiration-in-ms: 120000
-#    refresh:
-#      expiration-in-ms: 600000
+authentication:
+  jwt:
+    public-key:
+      MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxfRDt5R5JpIlLhLzmA XxW0wOUV+uBx8rdTJxbofX0EEv4DJ3BEAdc6C9wGGrqnpH55GVKwlhYkUivKd25 iuiHwj4F/zHcVT75JvxOiXXWOy1Hi4esdLKJuBTl5EskJb4UyENeKbi46LbO61E A2C9gho+nz9ggGZytQzoaM2mYL6SFKwCmzOUuf4Pvv40+4nzTT7PK0ZfBN/8EzY BMBrLJ8S/jRVFglr73UrhTKDdakq0RX7xuiSakdtgmssqP5zS7FiElKuuxeghH Ue3pWRugwbeaGFgAOf5c19VSeMZRDBhs3RGRVDVVirarGGwGjT6+cp0jFIaQGM DIzrVNzQeeQIDAQAB
+    private-key:
+      MIIEowIBAAKCAQEAxfRDt5R5JpIlLhLzmAXxW0wOUV+uBx8rdTJxbofX0EEv4DJ 3BEAdc6C9wGGrqnpH55GVKwlhYkUivKd25iuiHwj4F/zHcVT75JvxOiXXWOy1H i4esdLKJuBTl5EskJb4UyENeKbi46LbO61EA2C9gho+nz9ggGZytQzoaM2mYL6 SFKwCmzOUuf4Pvv40+4nzTT7PK0ZfBN/8EzYBMBrLJ8S/jRVFglr73UrhTKDd akq0RX7xuiSakdtgmssqP5zS7FiElKuuxeghHUe3pWRugwbeaGFgAOf5c19VS eMZRDBhs3RGRVDVVirarGGwGjT6+cp0jFIaQGMDIzrVNzQeeQIDAQABAoIBAG wzPahkoWvxyhzLAxb/eJN8mP7lm4wM/4YJ0nKmEdKlLvQO4XsTSIXhQJadTGX cfN0YeD6T3AUI4RnZN2ZMR0tLbcA+zQ0ndJ/alRpBgNn8WGtsrh5op1Jkn4xj L8bAnm9hy6k9Hxtp8wdFh72I7Uzl54DH9Yl5dg18RrSyY9TQnqEqa6xqB3605 0oecNWdSLgoPF1m42VCRKZhCogV6sYP22AGiUMsq39hwSWY7Gx2VWZHPlc78 0mk2EDzxaT/9NbYHKjE955A6PMv2sXSvOku2Fg2NDfiP1FrAg0P4vSEZg9RR 1YtUOrw+7IIM/IXWRMSbnsLjMjn9HOo1RjluGECgYEA9cYbWAcEV2NE6QiX2 UU85JUezEcNTN89tfBE0qaujidg2+2bw91xzpF6+IR/zBfP3xvv+e0QeLMpa LHmeD00YwALu3Hsp4L+r/kUcZyl3T7nxWkSutdSlEpbQrfBUJMeEXw4QUZb 2HCWxwy4HCMwswXKo0cBQY3gpoU9Krl/mF0CgYEAzjDMv2XKu43Vc4A7UMc Ue90fXUhHTQhdTBA8JDk8iWlWoR50DTdiiHhaqTKCuxj5Xl6m53X9bnRBTFq FixWXhOY3+pGMIOw1GZUbv20OMBqEQHd6WYnB0rtfb77l0zypGWeQPivf+DF NiWPN9BxwyMzwujStvLkM0lYPU5tBzM0CgYB2WeK6/g4KIuSBL0EoQF41WNX O2vw9o1btMPmDUv7Ft5K99WrH4/A03/uOhwefeWwBbUufV5hR9zyejOSFzDt Y3SHJLvAeLkeE5/X/S8bXhr5HYvTBAoVioXfW5fPyYBXfp6jTThVWYclJqwd RjWSbINPW0o95SOAAcDLnSxJ1hQKBgQCKhQZIXx4/uh14JuGydswwGnGDvZc JDWGARDfjLgCZYAcu3sKgTmEHxbNCkAh7oV+GIpiGTyIfHkLwBLBKrArK4c 8hqr41L/rMYPvvMlihwG6w0JOFq6Jm7DJFZD4KF2qTApxI6DjjCFxKvJ4ULT cn72aZ8eH2M2uFswNA68Dc0QKBgBy77HYFPvoXr/VunsSOd7SfNUa0E4KZR 6CRGWKJzWMKzN/yQgc7xYZGiYZ76TKQKO5AxMUv6pY04NOaHgzq2TUs4p0/g nD4582VlDky7gzyo6dtQnA6V79n8D/bKforECjp4D6W97PHGp0MEFoTwPXE 2A/+zV5tt7Cs7ZsiT89p
+
+    access:
+      expiration-in-ms: 120000
+    refresh:
+      expiration-in-ms: 600000
 

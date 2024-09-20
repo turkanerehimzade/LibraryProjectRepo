@@ -1,13 +1,20 @@
 package com.library.online_library_spring_app;
 
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class OnlineLibrarySpringAppApplication {
+public class OnlineLibrarySpringAppApplication
+//		implements CommandLineRunner
+{
 
 	public static void main(String[] args) {
 		SpringApplication.run(OnlineLibrarySpringAppApplication.class, args);
 	}
 
+//	@Override
+//	public void run(String... args) throws Exception {
+//
+//	}
 }

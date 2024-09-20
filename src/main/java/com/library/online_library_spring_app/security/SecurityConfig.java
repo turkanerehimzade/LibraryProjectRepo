@@ -68,7 +68,7 @@ public class SecurityConfig {
                 .exceptionHandling(ex -> ex
                         .accessDeniedHandler(accessDeniedHandler) // İcazə rədd olunduqda handler-i işə salır
                         .authenticationEntryPoint(authenticationEntryPoint)) // Autentifikasiyada səhv olduqda handler-i işə salır
-                .build(); // Konfiqurasiyanı tamamlayır
+                .build();
     }
 
 
@@ -88,6 +88,4 @@ public class SecurityConfig {
     public PasswordEncoder encoder() {
         return new BCryptPasswordEncoder();
     }
-
-
 }
