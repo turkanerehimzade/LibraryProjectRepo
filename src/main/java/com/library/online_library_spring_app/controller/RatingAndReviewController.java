@@ -36,7 +36,7 @@ public class RatingAndReviewController {
     private SuccessResponse<List<RatingAndReviewUserResponse>> getRatingAndReviewByUser(@PathVariable Long userId )  {
         return ratingAndReviewService.getAllRatingAndReviewsByUser(userId);
     }
-    @PostMapping
+    @PostMapping("/add-rating")
     private SuccessResponse<RatingAndReviewResponse> createRatingAndReview(@RequestBody @Valid RatingAndReviewCreateRequest ratingAndReviewCreateRequest) {
         return ratingAndReviewService.createRatingAndReview(ratingAndReviewCreateRequest);
     }

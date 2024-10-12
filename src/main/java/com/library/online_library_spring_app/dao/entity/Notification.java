@@ -24,10 +24,10 @@ public class Notification {
     private NotificationMessage message;
     @Column(name="send_at")
     private LocalDateTime sentAt;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="user_id")
     private Users users;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="book_id")
     private Books books;
     @Enumerated(EnumType.STRING)

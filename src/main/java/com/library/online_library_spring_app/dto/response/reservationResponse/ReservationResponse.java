@@ -13,8 +13,10 @@ import java.time.LocalDateTime;
 @ToString
 @Builder
 public class ReservationResponse {
-    private Users user;
-    private Books book;
+//    private Users user;
+//    private Books book;
+    private Long bookId;
+    private Long userId;
     private LocalDateTime reservationStart;
     private LocalDateTime reservationEnd;
     private ReservationStatus status;

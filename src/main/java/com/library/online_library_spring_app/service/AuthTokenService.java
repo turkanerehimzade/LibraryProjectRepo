@@ -6,7 +6,7 @@ import com.library.online_library_spring_app.security.UserPrincipal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
-import org.webjars.NotFoundException;
+
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -17,9 +17,9 @@ public class AuthTokenService {
     private final AuthTokenRepository authTokenRepository;
 
     public void deactiveAccessToken(String accessToken) {
-        String token = encryptAccessToken(accessToken);
-        AuthToken authToken = authTokenRepository.findAuthTokenByAccesTokenAndIsActive(token, true)
-                .orElseThrow(() -> new NotFoundException("Auth token not found"));
+//        String token = encryptAccessToken(accessToken);
+        AuthToken authToken = authTokenRepository.findAuthTokenByAccessTokenAndIsActive(accessToken, true)
+                .orElseThrow(() -> new RuntimeException("Auth token not found"));
         authToken.setIsActive(false);
         authTokenRepository.save(authToken);
     }
@@ -43,13 +43,13 @@ public class AuthTokenService {
     public void checkAccessToken(String accessToken) {
         String token = encryptAccessToken(accessToken);
         System.err.println(token);
-        authTokenRepository.findAuthTokenByAccesTokenAndIsActive(token, true)
-                .orElseThrow(() -> new NotFoundException("Auth token not found"));
+        authTokenRepository.findAuthTokenByAccessTokenAndIsActive(token, true)
+                .orElseThrow(() -> new RuntimeException("Auth token not found"));
     }
 
-    public void saveTokenInfo(UserPrincipal userPrincipal, String accesToken, String refreshToken) {
+    public void saveTokenInfo(UserPrincipal userPrincipal, String accessToken, String refreshToken) {
         AuthToken authToken = new AuthToken();
-        authToken.setAccesToken(accesToken);
+        authToken.setAccessToken(accessToken);
         authToken.setRefreshToken(refreshToken);
         authToken.setUserPrincipal(userPrincipal);
         authTokenRepository.save(authToken);

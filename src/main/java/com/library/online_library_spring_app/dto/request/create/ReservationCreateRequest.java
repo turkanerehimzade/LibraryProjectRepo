@@ -18,8 +18,8 @@ public class ReservationCreateRequest {
 
     private Users user;
     private Books book;
-    private LocalDate reservationStart;
-    private LocalDate reservationEnd;
+    private LocalDateTime reservationStart;
+    private LocalDateTime reservationEnd;
     private ReservationStatus status=ReservationStatus.RESERVED;
     private Timestamp createdAt=new Timestamp(System.currentTimeMillis());
 }

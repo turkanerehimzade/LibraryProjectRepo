@@ -32,10 +32,10 @@ public class Reservation {
     private Books book;
 
     @Column(name = "reservation_start")
-    private LocalDate reservationStart;
+    private LocalDateTime reservationStart;
 
     @Column(name = "reservation_end")
-    private LocalDate reservationEnd;
+    private LocalDateTime reservationEnd;
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private ReservationStatus status;

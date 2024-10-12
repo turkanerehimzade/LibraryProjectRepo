@@ -19,11 +19,11 @@ public class AuthToken {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "access_token")
-    private String accesToken;
+    private String accessToken;
     @Column(name = "refresh_token")
     private String refreshToken;
     @Column(name="is_active")
-    private Boolean isActive;
+    private Boolean isActive=true;
     @Column(name = "created_at")
     private Timestamp createdAt;
     @Column(name = "updated_at")

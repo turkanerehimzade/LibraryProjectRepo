@@ -10,6 +10,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -17,14 +18,16 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
-import java.security.KeyFactory;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import java.security.*;
+import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 import java.util.Date;
+
+import static javax.crypto.Cipher.SECRET_KEY;
 
 @Component
 public class JwtProvider {
@@ -36,39 +39,84 @@ public class JwtProvider {
 
     private static final String JWT_HEADER_STRING = "Authorization";
     private static final String JWT_TOKEN_PREFIX = "Bearer";
-    private PrivateKey jwtPrivateKey;
-    private PublicKey jwtPublicKey;
+    //    private PrivateKey jwtPrivateKey;
+//    private PublicKey jwtPublicKey;
     private final CustomUserDetailService userDetailsService;
-    private final AuthTokenService authTokenService;
+//    private final AuthTokenService authTokenService;
 
-    public JwtProvider(CustomUserDetailService userDetailsService, AuthTokenService authTokenService) {
+    public JwtProvider(CustomUserDetailService userDetailsService) {
         this.userDetailsService = userDetailsService;
-        this.authTokenService = authTokenService;
-        initializeKeys();
+        KeyPair keyPair = Keys.keyPairFor(SignatureAlgorithm.RS512);
+        this.privateKey = String.valueOf(keyPair.getPrivate());
+        this.publicKey = String.valueOf(keyPair.getPublic());
+        // İstəyə bağlı olaraq public açarı da əldə edə bilərsiniz
     }
 
-    private void initializeKeys() {
-        KeyFactory keyFactory = getKeyFactory();
+
+//    private void initializeKeys() {
+//        KeyFactory keyFactory = getKeyFactory();
+//        try {
+//            Base64.Decoder decoder = Base64.getDecoder();
+//            PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(decoder.decode(privateKey));
+//            X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(decoder.decode(publicKey));
+//
+//            jwtPrivateKey = keyFactory.generatePrivate(privateKeySpec);
+//            jwtPublicKey = keyFactory.generatePublic(publicKeySpec);
+//        } catch (Exception e) {
+//            throw new RuntimeException("Invalid key specification", e);
+//        }
+//    }
+
+    //
+    private PrivateKey preparePrivateKey() {
         try {
-            Base64.Decoder decoder = Base64.getDecoder();
-            PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(decoder.decode(privateKey));
-            X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(decoder.decode(publicKey));
+//            String privateKeyPEM = publicKey.replace("-----BEGIN PRIVATE KEY-----", "")
+//                    .replace("-----END PRIVATE KEY-----", "")
+//                    .replaceAll("\\s", "");
+            KeyFactory kf = getKeyFactory();
 
-            jwtPrivateKey = keyFactory.generatePrivate(privateKeySpec);
-            jwtPublicKey = keyFactory.generatePublic(publicKeySpec);
-        } catch (Exception e) {
-            throw new RuntimeException("Invalid key specification", e);
+            PKCS8EncodedKeySpec keySpecPKCS8 = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(privateKey));
+            return kf.generatePrivate(keySpecPKCS8);
+        } catch (InvalidKeySpecException e) {
+            e.printStackTrace();
         }
+        return null;
     }
 
+    private PublicKey preparePublicKey() {
+        try {
+//            String publicKeyPEM = publicKey.replace("-----BEGIN PUBLIC KEY-----", "")
+//                    .replace("-----END PUBLIC KEY-----", "")
+//                    .replaceAll("\\s", "");
 
+            KeyFactory kf = getKeyFactory();
+            X509EncodedKeySpec keySpecX509 = new X509EncodedKeySpec(Base64.getDecoder().decode(publicKey));
+            return kf.generatePublic(keySpecX509);
+        } catch (InvalidKeySpecException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     public String generateToken(UserPrincipal userPrincipal, Long expireDate) {
         return Jwts.builder()
                 .setSubject(userPrincipal.getUsername())
+                .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expireDate))
-                .signWith(jwtPrivateKey, SignatureAlgorithm.RS512)
+                .signWith(preparePrivateKey(), SignatureAlgorithm.RS512)
                 .compact();
+    }
+
+    public Claims read(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(preparePublicKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
+    public String getSubject(String token) {
+        return read(token).getSubject();
     }
 
     private String resolveToken(HttpServletRequest request) {
@@ -80,16 +128,11 @@ public class JwtProvider {
     }
 
     public Authentication getAuthentication(HttpServletRequest request) {
-        String bearerToken = resolveToken(request);
+        String bearerToken = resolveToken( request);
         if (bearerToken == null) {
             return null;
         }
-        authTokenService.checkAccessToken(bearerToken);
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(jwtPublicKey)
-                .build()
-                .parseClaimsJws(bearerToken).getBody();
-
+        Claims claims = read(bearerToken);
         String username = claims.getSubject();
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
@@ -97,19 +140,19 @@ public class JwtProvider {
                 new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities()) : null;
     }
 
-//    public boolean isTokenValid(HttpServletRequest request) {
-//        String bearerToken = resolveToken(request);
-//        if (bearerToken == null) {
-//            return false;
-//        }
-//        Claims claims = Jwts.parserBuilder()
-//                .setSigningKey(jwtPublicKey)
-//                .build()
-//                .parseClaimsJws(bearerToken)
-//                .getBody();
-//
-//        return !claims.getExpiration().before(new Date());
-//    }
+    public boolean isTokenValid(HttpServletRequest request) {
+        String bearerToken = resolveToken(request);
+        if (bearerToken == null) {
+            return false;
+        }
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(publicKey)
+                .build()
+                .parseClaimsJws(bearerToken)
+                .getBody();
+
+        return !claims.getExpiration().before(new Date());
+    }
 
     private KeyFactory getKeyFactory() {
         try {
@@ -118,4 +161,5 @@ public class JwtProvider {
             throw new RuntimeException("Unknown key generation algorithm", e);
         }
     }
+
 }

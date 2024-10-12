@@ -18,8 +18,8 @@ public class ReservationUpdateRequest {
 
 //    private Users user;
 //    private Books book;
-    private LocalDate reservationStart;
-    private LocalDate reservationEnd;
+    private LocalDateTime reservationStart;
+    private LocalDateTime reservationEnd;
     private ReservationStatus status;
     private Timestamp updatedAt = new Timestamp(System.currentTimeMillis());
 }

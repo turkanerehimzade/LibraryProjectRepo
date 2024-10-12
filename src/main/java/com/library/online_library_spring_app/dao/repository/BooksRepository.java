@@ -17,6 +17,6 @@ public interface BooksRepository extends JpaRepository<Books, Long> {
     //    @Query("SELECT b FROM Books b WHERE LOWER(b.bookName) = LOWER(:bookName)")
     List<Books> findBooksByBookName(String booksName);
 
-
+//    List<Books> findBooksByAuthors_NameAndAuthors_Surname(String authorName, String authorSurname);
 //    List<Books> findBooksWithCount();
 }

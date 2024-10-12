@@ -1,10 +1,12 @@
 package com.library.online_library_spring_app.controller;
 
+import com.library.online_library_spring_app.dao.entity.Role;
 import com.library.online_library_spring_app.dao.entity.Users;
 import com.library.online_library_spring_app.dto.request.create.UsersCreateRequest;
 import com.library.online_library_spring_app.dto.request.update.UsersUpdateRequest;
 import com.library.online_library_spring_app.dto.response.UsersResponse;
 import com.library.online_library_spring_app.dto.response.base.SuccessResponse;
+import com.library.online_library_spring_app.enums.RoleName;
 import com.library.online_library_spring_app.service.UsersService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +19,7 @@ import java.util.List;
 //getAllUsers: +
 //getUserByUsername:+
 // getUsersByRole: Müəyyən rola malik istifadəçiləri əldə edir.
-//deactivateUser: İstifadəçi hesabını deaktiv edir.
+//deactivateUser: +
 
 @RestController
 @RequiredArgsConstructor
@@ -40,12 +42,20 @@ public class UsersController {
     public SuccessResponse<Object> deleteUserById(@PathVariable Long id) {
         return usersService.deleteUserById(id);
     }
-    @PostMapping
+    @PostMapping("/add-user")
     public SuccessResponse<Object> createUser(@RequestBody UsersCreateRequest usersCreateRequest) {
         return usersService.createUser(usersCreateRequest);
     }
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public SuccessResponse<Object> updateUser(@PathVariable Long id, @RequestBody UsersUpdateRequest usersUpdateRequest) {
         return usersService.updateUser(id,usersUpdateRequest);
+    }
+    @PutMapping("/deactivate/{id}")
+    public SuccessResponse<Object> deactivateUser(@PathVariable Long id) {
+        return usersService.deactivateUser(id);
+    }
+    @GetMapping("/{role}")
+    public SuccessResponse<List<UsersResponse>> getUsersByRole(@PathVariable RoleName role) {
+        return usersService.getUsersByRole(role);
     }
 }

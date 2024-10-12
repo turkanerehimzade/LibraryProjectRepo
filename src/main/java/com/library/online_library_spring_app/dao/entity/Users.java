@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Builder
 @Getter
@@ -24,6 +25,13 @@ public class Users {
     private String email;
     private String phone;
     private String address;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_role",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    List<Role> roles;
     @Column(name="user_is_active")
     private Boolean userIsActive;
     @Column(name = "created_at")

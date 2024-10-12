@@ -8,5 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface AuthTokenRepository extends JpaRepository<AuthToken, Long> {
-    Optional<AuthToken> findAuthTokenByAccesTokenAndIsActive(String accesToken, Boolean isActive);
+    Optional<AuthToken> findAuthTokenByAccessTokenAndIsActive(String accessToken, Boolean isActive);
 }
