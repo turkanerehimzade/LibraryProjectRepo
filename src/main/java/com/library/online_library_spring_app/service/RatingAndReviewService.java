@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -24,16 +25,19 @@ public class RatingAndReviewService {
     private final RatingAndReviewMapper ratingAndReviewMapper;
     private final BooksRepository booksRepository;
 
-//    public SuccessResponse<List<RatingAndReviewResponse>> getAllRatingAndReviews() {
-//        List<RatingAndReviewResponse> ratingAndReviewResponseList = ratingAndReviewRepository.findAll().stream().map(ratingAndReviewMapper::toRatingAndReviewResponse).toList();
-//        return SuccessResponse.createSuccessResponse(ratingAndReviewResponseList, ResponseCode.SUCCESS);
-//    }
+
     public SuccessResponse<List<RatingAndReviewBookResponse>> getAllRatingAndReviewsByBook(String bookName) {
         List<RatingAndReviewBookResponse> ratingAndReviewResponseList = ratingAndReviewRepository.findByBookBookName(bookName).stream().map(ratingAndReviewMapper::toRatingAndReviewResponseBook).toList();
+        if(Objects.isNull(ratingAndReviewResponseList)) {
+            throw new RuntimeException("This book doesn't have received any rating and reviews");
+        }
         return SuccessResponse.createSuccessResponse(ratingAndReviewResponseList, ResponseCode.SUCCESS);
     }
     public SuccessResponse<List<RatingAndReviewUserResponse>> getAllRatingAndReviewsByUser(Long userId) {
         List<RatingAndReviewUserResponse> ratingAndReviewResponseList = ratingAndReviewRepository.findByUserId(userId).stream().map(ratingAndReviewMapper::toRatingAndReviewResponseUser).toList();
+        if(Objects.isNull(ratingAndReviewResponseList)) {
+            throw new RuntimeException("This user doesn't have any rating and reviews");
+        }
         return SuccessResponse.createSuccessResponse(ratingAndReviewResponseList, ResponseCode.SUCCESS);
     }
     public SuccessResponse<RatingAndReviewResponse> createRatingAndReview(RatingAndReviewCreateRequest ratingAndReviewCreateRequest){
@@ -45,7 +49,8 @@ public class RatingAndReviewService {
         return SuccessResponse.createSuccessResponse(null, ResponseCode.SUCCESS);
     }
     public SuccessResponse<RatingAndReviewResponse> updateRatingAndReview(RatingAndReviewUpdateRequest ratingAndReviewUpdateRequest,Long ratingId){
-        RatingAndReview ratingAndReview=ratingAndReviewRepository.findById(ratingId).orElseThrow();
+        RatingAndReview ratingAndReview=ratingAndReviewRepository.findById(ratingId)
+                .orElseThrow(()->new RuntimeException("There are no rating and reviews with this id"));
         buildRatingAndReview(ratingAndReview,ratingAndReviewUpdateRequest);
         ratingAndReviewRepository.save(ratingAndReview);
         return SuccessResponse.createSuccessResponse(null, ResponseCode.SUCCESS);
@@ -60,7 +65,8 @@ public class RatingAndReviewService {
         }
     }
     public SuccessResponse<RatingAndReviewResponse> deleteRatingAndReview(Long ratingId){
-        RatingAndReview ratingAndReview=ratingAndReviewRepository.findById(ratingId).orElseThrow();
+        RatingAndReview ratingAndReview=ratingAndReviewRepository.findById(ratingId)
+                .orElseThrow(()->new RuntimeException("There are no rating and reviews with this id"));
         ratingAndReviewRepository.delete(ratingAndReview);
         return SuccessResponse.createSuccessResponse(null, ResponseCode.SUCCESS);
     }

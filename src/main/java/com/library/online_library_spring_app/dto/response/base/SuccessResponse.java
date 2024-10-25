@@ -11,8 +11,7 @@ import lombok.experimental.SuperBuilder;
 public class SuccessResponse<T> extends BaseResponse<T> {
     private T data;
 
-    //    public SuccessResponse(String message, Integer statusCode) {
-//        super(message,statusCode);
+
     public static <R> SuccessResponse<R> createSuccessResponse(R data, ResponseCode responseCode) {
         return SuccessResponse
                 .<R>builder()

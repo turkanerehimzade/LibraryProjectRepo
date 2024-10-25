@@ -1,5 +1,6 @@
 package com.library.online_library_spring_app.controller;
 
+import com.library.online_library_spring_app.dto.request.FilterBookRequest;
 import com.library.online_library_spring_app.dto.request.create.BooksCreateRequest;
 import com.library.online_library_spring_app.dto.request.update.BooksUpdateRequest;
 import com.library.online_library_spring_app.dto.response.BooksInventorResponse;
@@ -7,8 +8,7 @@ import com.library.online_library_spring_app.dto.response.BooksResponse;
 import com.library.online_library_spring_app.dto.response.base.SuccessResponse;
 import com.library.online_library_spring_app.service.BooksService;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,19 +17,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-//createBook:+
-//updateBook:+
-//deleteBook : +
-//getBookById :+
-//getAllBooks: +
-// getBooksByAuthor: +
-//searchBooks :+ (kicik herf)
-//filterBooks
-//getBookInventory: Kitabların mövcud sayını izləyir və göstərir. + //eyni olmasin bide null
 
-@RestController//jsona chevirecek
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/books")
+@SecurityRequirement(name = "Authorization")
 @Tag(name = "Books Controller", description = "Books management operations")
 public class BooksController {
     private final BooksService booksService;
@@ -45,11 +37,6 @@ public class BooksController {
     public SuccessResponse<List<BooksInventorResponse>> getBooksInventory() {
         return booksService.getBooksInventory();
     }
-//    @Operation(summary = "Get all books", description = "Returns a list of all available books",
-//            responses = {
-//                    @ApiResponse(responseCode = "200", description = "Successfully retrieved list"),
-//                    @ApiResponse(responseCode = "500", description = "Internal server error")
-//            })
     @GetMapping("/all-book")
     public SuccessResponse<List<BooksResponse>> getAllBooks() {//bunu
         return booksService.getAllBooks();
@@ -67,7 +54,9 @@ public class BooksController {
 
     @PostMapping("/add-book")
     @ResponseStatus(value = HttpStatus.CREATED)
-    public SuccessResponse<Object> createBook(@RequestBody @Valid BooksCreateRequest booksCreateRequest) {
+    public SuccessResponse<Object> createBook(@RequestBody @Valid BooksCreateRequest booksCreateRequest
+
+    ) {
         return booksService.createBookWithAuthor(booksCreateRequest);
     }
 
@@ -85,4 +74,10 @@ public class BooksController {
     public SuccessResponse<Object> removeBookFromAuthor(@PathVariable("authorName")String authorName, @PathVariable("authorSurname")String authorSurname) {
         return booksService.removeBookFromAuthor(authorName,authorSurname);
     }
+
+    @PostMapping("/filter")
+    public SuccessResponse<List<BooksResponse>> filterBooks(@RequestBody FilterBookRequest filterBookRequest) {
+        return booksService.getFilteredBooks(filterBookRequest);
+    }
+
 }

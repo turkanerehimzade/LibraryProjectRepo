@@ -17,7 +17,6 @@ public class AuthTokenService {
     private final AuthTokenRepository authTokenRepository;
 
     public void deactiveAccessToken(String accessToken) {
-//        String token = encryptAccessToken(accessToken);
         AuthToken authToken = authTokenRepository.findAuthTokenByAccessTokenAndIsActive(accessToken, true)
                 .orElseThrow(() -> new RuntimeException("Auth token not found"));
         authToken.setIsActive(false);

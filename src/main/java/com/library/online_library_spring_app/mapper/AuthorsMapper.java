@@ -14,18 +14,9 @@ import java.util.Set;
 public interface AuthorsMapper {
 
     AuthorsMapper INSTANCE = Mappers.getMapper(AuthorsMapper.class);
-//  @Mapping(target = "books", source = "books")
 
     AuthorsResponse toAuthorsResponse(Authors authors);
     Set<AuthorsResponse> toAuthorsResponse(Set<Authors> authors);
     Authors toEntity(AuthorsCreateRequest authorsCreateRequest);
-//    public static AuthorsResponse toAuthorsResponse(Authors authors) {
-//        return AuthorsResponse.builder()
-//                .name(authors.getName())
-//                .surname(authors.getSurname())
-////                .books(authors.getBooks())
-//                .createdAt(authors.getCreatedAt())
-//                .updatedAt(authors.getUpdatedAt())
-//                .build();
-//    }
+
 }

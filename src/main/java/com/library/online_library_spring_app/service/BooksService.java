@@ -2,6 +2,7 @@ package com.library.online_library_spring_app.service;
 
 import com.library.online_library_spring_app.dao.entity.Users;
 import com.library.online_library_spring_app.dao.repository.ReservationRepository;
+import com.library.online_library_spring_app.dto.request.FilterBookRequest;
 import com.library.online_library_spring_app.dto.response.RentalHistoryResponse;
 import com.library.online_library_spring_app.enums.ResponseCode;
 import com.library.online_library_spring_app.dao.entity.Authors;
@@ -18,15 +19,18 @@ import com.library.online_library_spring_app.dto.response.base.SuccessResponse;
 import com.library.online_library_spring_app.mapper.AuthorsMapper;
 import com.library.online_library_spring_app.mapper.BooksMapper;
 import com.library.online_library_spring_app.mapper.ReservationMapper;
+import com.library.online_library_spring_app.util.BooksSpecifications;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -48,21 +52,25 @@ public class BooksService {
 
     public SuccessResponse<List<BooksResponse>> getBookById(Long id) {
         List<BooksResponse> booksResponseList = booksRepository.findById(id)
-                .stream().map(booksMapper::toBooksResponse).toList();
+        .stream().map(booksMapper::toBooksResponse).toList();
+        if (booksResponseList.isEmpty()) {
+            throw new RuntimeException("There is no book with id " + id);
+        }
         return SuccessResponse.createSuccessResponse(booksResponseList, ResponseCode.SUCCESS);
     }
 
     public SuccessResponse<List<BooksResponse>> getBooksByAuthors(String authorName, String authorSurname) {
-        List<BooksResponse> booksResponseList = booksRepository.findBooksByAuthors_NameAndAuthors_Surname(authorName, authorSurname)
-                .stream()
-                .map(booksMapper::toBooksResponse)
-                .toList();
+        List<BooksResponse> booksResponseList = booksRepository.findBooksByAuthors_NameAndAuthors_Surname(authorName, authorSurname).stream().map(booksMapper::toBooksResponse).toList();
+        if (booksResponseList.isEmpty()) {
+            throw new RuntimeException("This author's book is not found");
+        }
         return SuccessResponse.createSuccessResponse(booksResponseList, ResponseCode.SUCCESS);
     }
 
     public SuccessResponse<BooksResponse> searchBooks(String bookName) {
         BooksResponse booksResponse = booksRepository.findBooksByBookName(bookName)
-                .stream().map(booksMapper::toBooksResponse).findAny().orElseThrow();
+                .stream().map(booksMapper::toBooksResponse).findAny()
+                .orElseThrow(() -> new RuntimeException("Book not found with name: " + bookName));
         return SuccessResponse.createSuccessResponse(booksResponse, ResponseCode.SUCCESS);
     }
 
@@ -72,7 +80,6 @@ public class BooksService {
     }
 
     public SuccessResponse<Object> createBookWithAuthor(BooksCreateRequest booksCreateRequest) {
-//        validateBook(booksCreateRequest);
         Books books = booksMapper.toEntity(booksCreateRequest);
         AuthorsCreateRequest authorsCreateRequest = booksCreateRequest.getAuthorsCreateRequest();
         if (authorsCreateRequest != null) {
@@ -83,22 +90,19 @@ public class BooksService {
         booksRepository.save(books);
         return SuccessResponse.createSuccessResponse(null, ResponseCode.SUCCESS);
     }
-//    public void validateBook(BooksCreateRequest booksCreateRequest) {
-//        if(Objects.isNull(booksCreateRequest.getBookName())){
-//            throw  BaseException.of(ResponseCode.ERROR);}
-//    }
+
 
     public SuccessResponse<Object> deleteBookById(Long id) {
-        Books books = booksRepository.findById(id).orElseThrow();
+        Books books = booksRepository.findById(id)
+                .orElseThrow(()->new RuntimeException("The book with this id does not exist"));
         books.setBookIsActive(false);
         books.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
-//        booksMapper.toBooksResponse(books);
         booksRepository.save(books);
         return SuccessResponse.createSuccessResponse(null, ResponseCode.SUCCESS);
     }
 
     public SuccessResponse<Object> updateBookById(Long id, BooksUpdateRequest booksUpdateRequest) {
-        Books books = booksRepository.findById(id).orElseThrow();
+        Books books = booksRepository.findById(id).orElseThrow(() -> new RuntimeException("Book not found with id: " + id));
         buildBookWithUpdateRequest(books, booksUpdateRequest);
         booksRepository.save(books);
         return SuccessResponse.createSuccessResponse(null, ResponseCode.SUCCESS);
@@ -119,30 +123,55 @@ public class BooksService {
             books.setPublicationDate(booksUpdateRequest.getPublicationDate());
         books.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
     }
-    @Transactional // Bu annotasiyanı əlavə edin
+
 
     public SuccessResponse<Object> removeBookFromAuthor(String authorName, String authorSurname) {
-        List<Books> booksList =booksRepository.findBooksByAuthors_NameAndAuthors_Surname(authorName, authorSurname).stream()
+        List<Books> booksList = booksRepository.findBooksByAuthors_NameAndAuthors_Surname(authorName, authorSurname);
+        if (booksList.isEmpty()) {
+            throw new RuntimeException("This author's book is not found");
+        }
+        booksList.stream()
                 .peek(books -> {
-
                     books.setBookIsActive(false);
                     books.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
-                }).toList();
+                })
+                .toList();
 
         booksRepository.saveAll(booksList);
         return SuccessResponse.createSuccessResponse(null, ResponseCode.SUCCESS);
     }
+
     public SuccessResponse<List<BooksResponse>> getMostReadBooks(int limit) {
         Pageable pageable = PageRequest.of(0, limit); // İlk səhifə (0), limit sayda nəticə (10)
         List<BooksResponse> bookResponses = reservationRepository.findMostReadBooks(pageable).stream()
-                .map( booksMapper::toBooksResponse )
+                .map(booksMapper::toBooksResponse)
                 .collect(Collectors.toList());
 
         return SuccessResponse.createSuccessResponse(bookResponses, ResponseCode.SUCCESS);
     }
 
     public SuccessResponse<List<RentalHistoryResponse>> getBookRentalHistory(Long bookId) {
-        List<RentalHistoryResponse>rentalHistoryResponses=reservationRepository.findReservationByBookId(bookId).stream().map(reservationMapper::toRentalHistoryResponse).toList();
-        return SuccessResponse.createSuccessResponse(rentalHistoryResponses,ResponseCode.SUCCESS);
+        List<RentalHistoryResponse> rentalHistoryResponses = reservationRepository.findReservationByBookId(bookId).stream().map(reservationMapper::toRentalHistoryResponse).toList();
+        return SuccessResponse.createSuccessResponse(rentalHistoryResponses, ResponseCode.SUCCESS);
+    }
+
+    public SuccessResponse<List<BooksResponse>> getFilteredBooks(FilterBookRequest filterBookRequest) {
+        Specification<Books> spec = Specification.where(null);
+
+        if (filterBookRequest.getBookName() != null) {
+            spec = spec.and(BooksSpecifications.hasBookName(filterBookRequest.getBookName()));
+        }
+        if (filterBookRequest.getCategory() != null) {
+            spec = spec.and(BooksSpecifications.hasCategory(filterBookRequest.getCategory()));
+        }
+        if (filterBookRequest.getLanguage() != null) {
+            spec = spec.and(BooksSpecifications.hasLanguage(filterBookRequest.getLanguage()));
+        }
+        if (filterBookRequest.getPublicationDate() != null) {
+            spec = spec.and(BooksSpecifications.hasPublishedDateAfter(filterBookRequest.getPublicationDate()));
+        }
+        List<BooksResponse> booksResponseList=booksRepository.findAll(spec).stream().map(booksMapper::toBooksResponse).collect(Collectors.toList());
+
+        return SuccessResponse.createSuccessResponse(booksResponseList, ResponseCode.SUCCESS);
     }
 }

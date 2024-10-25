@@ -1,6 +1,5 @@
 package com.library.online_library_spring_app.dto.request.create;
 
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 

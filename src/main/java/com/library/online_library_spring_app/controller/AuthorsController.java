@@ -5,23 +5,18 @@ import com.library.online_library_spring_app.dto.request.update.AuthorsUpdateReq
 import com.library.online_library_spring_app.dto.response.AuthorsResponse;
 import com.library.online_library_spring_app.dto.response.base.SuccessResponse;
 import com.library.online_library_spring_app.service.AuthorsService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-//addAuthor:  +
-//updateAuthor: +
-//deleteAuthor: +
-//getAuthorById:+ ----isactive
-//getAllAuthors:+
-//getAuthorByName: +
-//removeBookFromAuthor:
 
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/authors")
+@SecurityRequirement(name = "Authorization")
 public class AuthorsController {
     private final AuthorsService authorsService;
 

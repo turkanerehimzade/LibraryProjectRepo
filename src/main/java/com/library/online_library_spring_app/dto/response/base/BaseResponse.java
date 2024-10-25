@@ -15,14 +15,4 @@ public class BaseResponse<T> {
     private Integer statusCode;
 
 
-//    private T data;
-//
-//    public static <R> BaseResponse<R> buildBaseResponse(R data, ResponseCode responseCode) {
-//        return BaseResponse.<R>builder()
-//                .statusCode(responseCode.getStatusCode())
-////                .httpStatusCode(responseCode.getHttpStatusCode())
-//                .message(responseCode.getMessage())
-//                .data(data)
-//                .build();
-//    }
 }

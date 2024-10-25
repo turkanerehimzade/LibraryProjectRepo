@@ -34,9 +34,4 @@ public class CustomUserDetailService implements UserDetailsService {
         return new UserPrincipal(user.getId(), user.getUsername(), user.getPassword(), authorities);
     }
 
-//    @Override
-//    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-//        Users user = usersService.findUserByUsername(username); //byPin
-//        return new UserPrincipal(user.getId(), user.getUsername(), user.getPassword(), List.of("USER"));
-//    }
 }

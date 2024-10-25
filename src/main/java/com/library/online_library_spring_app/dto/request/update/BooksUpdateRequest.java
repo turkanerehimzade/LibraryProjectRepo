@@ -15,9 +15,8 @@ public class BooksUpdateRequest {
     private String category;
     private String language;
     private LocalDate publicationDate;
-    private int pageCount;
-    private int count;
+    private Integer pageCount;
+    private Integer count;
     private Boolean bookIsActive;
     private Timestamp updatedAt;
-    private AuthorsCreateRequest authorsCreateRequest;
 }

@@ -15,6 +15,8 @@ import java.util.List;
 public interface ReservationMapper {
     ReservationUserResponse toReservationUserResponse(Reservation reservation);
     ReservationBookResponse toReservationBookResponse(Reservation reservation);
+    @Mapping(source = "user.id", target = "userId")
+    @Mapping(source = "book.id", target = "bookId")
     ReservationResponse toReservationResponse(Reservation reservation);
     Reservation toReservation(ReservationCreateRequest reservationCreateRequest);
     @Mapping(source = "reservation.reservationStart", target = "rentalDate")

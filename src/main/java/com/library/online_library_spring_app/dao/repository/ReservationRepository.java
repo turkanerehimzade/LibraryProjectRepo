@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,7 +15,8 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     List<Reservation> findReservationsByUser_Id(Long userId);
     List<Reservation> findReservationsByBook_BookName(String bookName);
     List<Reservation>  findReservationByBookId(Long id);
-    Optional<Reservation> findReservationByUserIdAndBookId(Long userId, Long id);
+    @Query("SELECT r FROM Reservation r WHERE r.user.id = :userId AND r.book.id = :bookId AND r.status='RESERVED'")
+    Optional<Reservation> findReservationByUserIdAndBookId(Long userId, Long bookId);
     @Query("SELECT r.book, COUNT(r.book) as rentalCount " +
             "FROM Reservation r " +
             "GROUP BY r.book " +

@@ -7,8 +7,7 @@ import lombok.experimental.SuperBuilder;
 
 @Data
 @SuperBuilder
-//@NoArgsConstructor
-//@AllArgsConstructor
+
 public class ErrorResponse<T> extends BaseResponse<T> {
     public ErrorResponse(String message, Integer statusCode) {
         super(message,statusCode);

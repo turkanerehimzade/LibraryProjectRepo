@@ -33,7 +33,6 @@ public class SecurityConfig {
 
     private static final String[] AUTH_WHITELIST = {
             "/swagger-ui.html",
-//            "/webjars/**",
             "/v3/api-docs/**",
             "/swagger-ui/**",
             "/auth/**",
@@ -83,10 +82,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS).permitAll()
                         .requestMatchers(AUTH_WHITELIST).permitAll()
-//                        .anyRequest().authenticated())
+                        .requestMatchers(SUPER_ADMIN_WHITELIST).hasAnyRole("SUPER_ADMIN")
                         .requestMatchers(USER_WHITELIST).hasAnyRole("USER")
                         .requestMatchers(ADMIN_WHITELIST).hasAnyRole("ADMIN")
-                        .requestMatchers(SUPER_ADMIN_WHITELIST).hasAnyRole("SUPER_ADMIN")
+
                         .anyRequest().authenticated())
 
 

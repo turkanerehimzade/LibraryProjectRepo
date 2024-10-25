@@ -7,9 +7,7 @@ import lombok.*;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
 @Builder
 @Getter
@@ -30,9 +28,9 @@ public class Books {
     @Column(name = "publication_date")
     private LocalDate publicationDate;
     @Column(name = "page_count")
-    private int pageCount;
+    private Integer pageCount;
     @Column(name= "count")
-    private int count;
+    private Integer count;
     @Column(name = "book_is_active")
     private Boolean bookIsActive ;
     @Column(name = "created_at")

@@ -12,8 +12,7 @@ public interface BooksMapper {
 
     BooksMapper INSTANCE = Mappers.getMapper(BooksMapper.class);
 
-//    Set<BooksResponse> toBookResponse(Set<Books> books);
-//    @Mapping(target = "authors", source = "authors")
+
 
     BooksResponse toBooksResponse(Books books);
     Books toEntity(BooksCreateRequest booksCreateRequest);

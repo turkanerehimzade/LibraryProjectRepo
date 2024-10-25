@@ -10,23 +10,17 @@ import com.library.online_library_spring_app.dto.response.reservationResponse.Re
 import com.library.online_library_spring_app.dto.response.reservationResponse.ReservationResponse;
 import com.library.online_library_spring_app.dto.response.reservationResponse.ReservationUserResponse;
 import com.library.online_library_spring_app.service.ReservationService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 
-//addReservation: +  ----- (null)İstifadəçi tərəfindən ---- //TODO bunu duzeltmelisen
-//updateReservation: +
-//cancelReservation: +
-//getUserReservations: status +
-//getBookReservations: +
-//        getReservationDetails: + is active
-//        checkAvailability: Kitabın müəyyən tarixlərdə mövcud olub olmadığını yoxlayır.
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/reservation")
+@SecurityRequirement(name = "Authorization")
 public class ReservationController {
     private final ReservationService reservationService;
 

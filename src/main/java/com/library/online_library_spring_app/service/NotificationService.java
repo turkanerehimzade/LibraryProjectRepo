@@ -38,7 +38,8 @@ public class NotificationService {
     }
 
     public SuccessResponse<NotificationResponse> deleteNotification(Long notificationId) {
-        Notification notification = notificationRepository.findById(notificationId).orElseThrow();
+        Notification notification = notificationRepository.findById(notificationId)
+                .orElseThrow(()->new RuntimeException("Notification not found"));
         notificationRepository.delete(notification);
         return SuccessResponse.createSuccessResponse(null, ResponseCode.SUCCESS);
     }

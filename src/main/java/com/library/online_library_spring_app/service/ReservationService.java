@@ -43,31 +43,57 @@ public class ReservationService {
     private final NotificationService notificationService;
     private final BookReturnEventRepository bookReturnEventRepository;
     private final BookReturnEventMapper bookReturnEventMapper;
+    private final UsersRepository usersRepository;
 
     public SuccessResponse<List<ReservationUserResponse>> getUserReservations(Long userId) {
-        List<ReservationUserResponse> reservationUserResponseList = reservationRepository.findReservationsByUser_Id(userId).stream().map(reservationMapper::toReservationUserResponse).toList();
+        List<ReservationUserResponse> reservationUserResponseList = reservationRepository
+                .findReservationsByUser_Id(userId)
+                .stream().map(reservationMapper::toReservationUserResponse)
+                .toList();
+        if(Objects.isNull(reservationUserResponseList)) {
+            throw new RuntimeException("There are no reservations for this user");
+        }
         return SuccessResponse.createSuccessResponse(reservationUserResponseList, ResponseCode.SUCCESS);
     }
 
     public SuccessResponse<List<ReservationBookResponse>> getBookReservations(String bookName) {
-        List<ReservationBookResponse> reservationBookResponseList = reservationRepository.findReservationsByBook_BookName(bookName).stream().map(reservationMapper::toReservationBookResponse).toList();
+        List<ReservationBookResponse> reservationBookResponseList = reservationRepository
+                .findReservationsByBook_BookName(bookName)
+                .stream()
+                .map(reservationMapper::toReservationBookResponse).toList();
+        if(Objects.isNull(reservationBookResponseList)) {
+            throw new RuntimeException("There are no reservations for this book");
+        }
         return SuccessResponse.createSuccessResponse(reservationBookResponseList, ResponseCode.SUCCESS);
     }
 
     public SuccessResponse<ReservationResponse> getReservation(Long reservationId) {
-        Reservation reservation = reservationRepository.findById(reservationId).orElseThrow();
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(()-> new RuntimeException("There is no reservation"));
         ReservationResponse reservationResponse = reservationMapper.toReservationResponse(reservation);
         return SuccessResponse.createSuccessResponse(reservationResponse, ResponseCode.SUCCESS);
     }
 
     public SuccessResponse<ReservationResponse> createReservation(ReservationCreateRequest reservationCreateRequest) {
+        Books book=booksRepository.findById(reservationCreateRequest.getBookId())
+                .orElseThrow(()->new RuntimeException("This book is not available in the library!"));
+        Users user=usersRepository.findByEmail(reservationCreateRequest.getEmail())
+                .orElseThrow(()->new RuntimeException("This user is not available in the library!"));
         Reservation reservation = reservationMapper.toReservation(reservationCreateRequest);
+        reservation.setBook(book);
+        reservation.setUser(user);
+        book.setCount(book.getCount()-1);
+        booksRepository.save(book);
         reservationRepository.save(reservation);
         return SuccessResponse.createSuccessResponse(null, ResponseCode.SUCCESS);
     }
 
     public SuccessResponse<ReservationResponse> cancelReservation(Long reservationId) {
-        Reservation reservation = reservationRepository.findById(reservationId).orElseThrow();
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(()->new RuntimeException("This reservation not found!"));
+        if(reservation.getStatus().equals(ReservationStatus.CANCELLED)) {
+            throw new RuntimeException("This reservation is already cancelled");
+        }
         reservation.setStatus(ReservationStatus.CANCELLED);
         reservation.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
         reservationRepository.save(reservation);
@@ -75,7 +101,8 @@ public class ReservationService {
     }
 
     public SuccessResponse<ReservationResponse> updateReservation(Long reservationId, ReservationUpdateRequest reservationUpdateRequest) {
-        Reservation reservation = reservationRepository.findById(reservationId).orElseThrow();
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(()->new RuntimeException("This book is not reserved!"));
         if (reservation.getStatus() != ReservationStatus.CANCELLED) {
             buildReservation(reservation, reservationUpdateRequest);
         }
@@ -134,14 +161,13 @@ public class ReservationService {
         return SuccessResponse.createSuccessResponse(null, ResponseCode.SUCCESS);
     }
 
-    //todo is after yoxsa before
     public List<SuccessResponse<NotificationResponse>> sendOverdueNotices() {
         LocalDateTime currentDate = LocalDateTime.now();
         List<Reservation> reservations = reservationRepository.findAll();
         List<SuccessResponse<NotificationResponse>> notificationResponseList = new ArrayList<>();
         NotificationCreateRequest notificationCreateRequest = new NotificationCreateRequest();
         for (Reservation reservation : reservations) {
-            if (currentDate.isAfter(reservation.getReservationEnd()) && reservation.getStatus() == ReservationStatus.RESERVED) {
+            if (currentDate.isBefore(reservation.getReservationEnd()) && reservation.getStatus() == ReservationStatus.RESERVED) {
 
                 notificationCreateRequest.setMessage(NotificationMessage.REMINDER);
                 notificationCreateRequest.setBookId(reservation.getBook().getId());
@@ -160,8 +186,6 @@ public class ReservationService {
     public SuccessResponse<Object> logReturnEvent(BookReturnEventCreateRequest bookReturnEventCreateRequest) {
         List<Reservation> reservations = reservationRepository.findAll();
         for (Reservation reservation : reservations) {
-            System.out.println("Reservation Book ID: " + reservation.getBook().getId());
-            System.out.println("Reservation User ID: " + reservation.getUser().getId());
             if (reservation.getBook().getId().equals(bookReturnEventCreateRequest.getBookId())) {
                 if (reservation.getUser().getId().equals(bookReturnEventCreateRequest.getUserId())) {
                     bookReturnEventRepository.save(bookReturnEventMapper.toBookReturnEvent(bookReturnEventCreateRequest));
@@ -169,7 +193,7 @@ public class ReservationService {
                 }
             }
 
-        }  return null;
+        }  throw new RuntimeException("No such reservation is available!");
     }//todo duzelt
 }
 

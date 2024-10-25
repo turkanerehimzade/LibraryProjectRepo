@@ -41,7 +41,7 @@ authentication:
 
 
     access:
-      expiration-in-ms: 120000
+      expiration-in-ms: 120000000
     refresh:
-      expiration-in-ms: 600000
+      expiration-in-ms: 600000000
 

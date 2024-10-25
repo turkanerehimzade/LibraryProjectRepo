@@ -1,29 +1,23 @@
 package com.library.online_library_spring_app.controller;
 
-import com.library.online_library_spring_app.dao.entity.Role;
-import com.library.online_library_spring_app.dao.entity.Users;
+import com.library.online_library_spring_app.dto.request.SignUpRequest;
 import com.library.online_library_spring_app.dto.request.create.UsersCreateRequest;
 import com.library.online_library_spring_app.dto.request.update.UsersUpdateRequest;
 import com.library.online_library_spring_app.dto.response.UsersResponse;
 import com.library.online_library_spring_app.dto.response.base.SuccessResponse;
 import com.library.online_library_spring_app.enums.RoleName;
 import com.library.online_library_spring_app.service.UsersService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-//addUser: +
-//updateUser: +
-//deleteUser: +
-//getUserById: +
-//getAllUsers: +
-//getUserByUsername:+
-// getUsersByRole: Müəyyən rola malik istifadəçiləri əldə edir.
-//deactivateUser: +
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/users")
+@SecurityRequirement(name = "Authorization")
 public class UsersController {
     private final UsersService usersService;
     @GetMapping
@@ -57,5 +51,9 @@ public class UsersController {
     @GetMapping("/{role}")
     public SuccessResponse<List<UsersResponse>> getUsersByRole(@PathVariable RoleName role) {
         return usersService.getUsersByRole(role);
+    }
+    @PostMapping("/register")
+    public ResponseEntity<?> registerUser(@RequestBody SignUpRequest signUpRequest) {
+        return ResponseEntity.ok(usersService.registerUser(signUpRequest));
     }
 }

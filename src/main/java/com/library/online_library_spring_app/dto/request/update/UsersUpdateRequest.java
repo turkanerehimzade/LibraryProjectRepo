@@ -1,6 +1,5 @@
 package com.library.online_library_spring_app.dto.request.update;
 
-import jakarta.persistence.Column;
 import lombok.*;
 
 import java.sql.Timestamp;

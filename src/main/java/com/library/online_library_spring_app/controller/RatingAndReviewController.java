@@ -7,27 +7,20 @@ import com.library.online_library_spring_app.dto.response.ratingAndReviewRespons
 import com.library.online_library_spring_app.dto.response.ratingAndReviewResponse.RatingAndReviewResponse;
 import com.library.online_library_spring_app.dto.response.ratingAndReviewResponse.RatingAndReviewUserResponse;
 import com.library.online_library_spring_app.service.RatingAndReviewService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-//1. addRatingAndReview():+
-//    2. getRatingsAndReviewsByBook() :+
-//    3. getRatingsAndReviewsByUser(): +
-//    4. updateRatingAndReview() :+
-//    5. deleteRatingAndReview() :+
-
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/ratings")
+@SecurityRequirement(name = "Authorization")
 public class RatingAndReviewController {
     private final RatingAndReviewService ratingAndReviewService;
-//    @GetMapping
-//    private SuccessResponse<List<RatingAndReviewResponse>> getRatingAndReview() {
-//        return ratingAndReviewService.getAllRatingAndReviews();
-//    }
+
     @GetMapping("/by-book/{bookName}")
     private SuccessResponse<List<RatingAndReviewBookResponse>> getRatingAndReviewByBook(@PathVariable String bookName )  {
         return ratingAndReviewService.getAllRatingAndReviewsByBook(bookName);

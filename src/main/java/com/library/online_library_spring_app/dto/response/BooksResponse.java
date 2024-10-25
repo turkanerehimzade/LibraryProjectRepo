@@ -32,17 +32,4 @@ public class BooksResponse {
     private AuthorsResponse authors;
 
 
-
-//    @Override
-//    public String toString() {
-//        return "BooksResponse{" +
-//                "bookName='" + bookName + '\'' +
-//                ", category='" + category + '\'' +
-//                ", language='" + language + '\'' +
-//                ", publicationDate=" + publicationDate +
-//                ", pageCount=" + pageCount +
-//                ", createdAt=" + createdAt +
-//                ", updatedAt=" + updatedAt +
-//                '}';
-//    }
 }

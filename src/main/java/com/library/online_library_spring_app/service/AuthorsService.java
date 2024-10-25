@@ -52,20 +52,21 @@ public class AuthorsService {
     @Transactional
     public  SuccessResponse<Object> createAuthorWithBook(AuthorsCreateRequest authorsCreateRequest) {
         Authors authors = authorsMapper.toEntity(authorsCreateRequest);
-        for (BooksCreateRequest booksCreateRequest : authorsCreateRequest.getBooksCreateRequests()) {
-            if (booksCreateRequest != null) {
-                Books book = booksMapper.toEntity(booksCreateRequest);
-                authors.addBook(book);
-                booksRepository.save(book);
-            }
-        }
+//        for (BooksCreateRequest booksCreateRequest : authorsCreateRequest.getBooksCreateRequests()) {
+//            if (authors.ge != null) {
+//                Books book = booksMapper.toEntity(booksCreateRequest);
+//                authors.addBook(book);
+//                booksRepository.save(book);
+//            }
+//        }
         authorsRepository.save(authors);
         return SuccessResponse.createSuccessResponse(null, ResponseCode.SUCCESS);
 
     }
 
     public  SuccessResponse<Object> updateAuthorById(Long id, AuthorsUpdateRequest authorsUpdateRequest) {
-        Authors authors = authorsRepository.findById(id).orElseThrow();
+        Authors authors = authorsRepository.findById(id)
+                .orElseThrow(()->new RuntimeException("Author not found"));
         buildAuthorWithUpdateRequest(authors, authorsUpdateRequest);
         authorsRepository.save(authors);
         return SuccessResponse.createSuccessResponse(null, ResponseCode.SUCCESS);
@@ -80,7 +81,10 @@ public class AuthorsService {
     }
 
     public SuccessResponse<Object> deleteAuthorById(Long id) {
-        Authors authors = authorsRepository.findById(id).orElseThrow();
+        Authors authors = authorsRepository.findById(id).orElseThrow(()->new RuntimeException("Author not found"));
+        if(authors.getAuthorsIsActive()==false){
+            throw new RuntimeException("Authors already is not active");
+        }
         authors.setAuthorsIsActive(false);
         authors.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
         authorsRepository.save(authors);

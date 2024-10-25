@@ -10,6 +10,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Getter
 @Setter
@@ -32,7 +33,6 @@ public class UsersCreateRequest {
     @Pattern(regexp = "^\\d{10}$", message = "Phone number must be 10 digits")
     private String phone;
     private String address;
-    private Role role = Role.
     private Boolean userIsActive = true;
     private Timestamp createdAt = new Timestamp(System.currentTimeMillis());
 }

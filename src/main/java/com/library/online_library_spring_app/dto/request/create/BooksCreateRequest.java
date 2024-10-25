@@ -18,8 +18,8 @@ public class BooksCreateRequest {
     @NotNull(message="language can not be null")
     private String language;
     private LocalDate publicationDate;
-    private int pageCount;
-    private int count;
+    private Integer pageCount;
+    private Integer count;
     private Boolean bookIsActive = true;
     private AuthorsCreateRequest authorsCreateRequest;
 }
